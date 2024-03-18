@@ -50,6 +50,24 @@ type SingleStatusResult struct {
 	} `json:"data,omitempty"`
 }
 
+type MultiMessageStatusResult struct {
+	Result
+	Data struct {
+		Data map[string]struct {
+			CreateTime      string `json:"create_time"`
+			CreateTimestamp int64  `json:"create_timestamp"`
+			TimeToLive      string `json:"time_to_live"`
+			ClickRate       string `json:"click_rate"`
+			MsgType         string `json:"msg_type"`
+			DeliveryRate    string `json:"delivery_rate"`
+			Delivered       int32  `json:"delivered"`
+			ID              string `json:"id"`
+			Click           int32  `json:"click"`
+			Resolved        int32  `json:"resolved"`
+		} `json:"data,omitempty"`
+	} `json:"data,omitempty"`
+}
+
 type BatchStatusResult struct {
 	Result
 	Data struct {

@@ -28,7 +28,7 @@ func NewClient(appSecret string, packageName []string) *MiPush {
 	}
 }
 
-//----------------------------------------Sender----------------------------------------//
+// ----------------------------------------Sender----------------------------------------//
 // 根据registrationId，发送消息到指定设备上
 func (m *MiPush) Send(ctx context.Context, msg *Message, regID string) (*SendResult, error) {
 	params := m.assembleSendParams(msg, regID)
@@ -255,7 +255,7 @@ func (m *MiPush) DeleteScheduleJobByJobKey(ctx context.Context, jobKey string) (
 	return &result, nil
 }
 
-//----------------------------------------Stats----------------------------------------//
+// ----------------------------------------Stats----------------------------------------//
 // 获取指定日期范围内的日统计数据（如果日期范围包含今日，则今日数据为从今天00：00开始到现在的累计量)。
 // packageName:
 // Android设备，传入App的包名
@@ -274,7 +274,7 @@ func (m *MiPush) Stats(ctx context.Context, start, end, packageName string) (*St
 	return &result, nil
 }
 
-//----------------------------------------Tracer----------------------------------------//
+// ----------------------------------------Tracer----------------------------------------//
 // 获取指定ID的消息状态
 func (m *MiPush) GetMessageStatusByMsgID(ctx context.Context, msgID string) (*SingleStatusResult, error) {
 	params := m.assembleStatusParams(msgID)
@@ -283,6 +283,22 @@ func (m *MiPush) GetMessageStatusByMsgID(ctx context.Context, msgID string) (*Si
 		return nil, err
 	}
 	var result SingleStatusResult
+	err = json.Unmarshal(bytes, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// GetMultiMessageStatusByMsgIDs 批量获取指定ID的消息状态
+// msgIDs: 用逗号分隔的多个消息ID msg1,msg2,msg3
+func (m *MiPush) GetMultiMessageStatusByMsgIDs(ctx context.Context, msgIDs string) (*MultiMessageStatusResult, error) {
+	params := m.assembleMultiStatusParams(msgIDs)
+	bytes, err := m.doPost(ctx, m.host+MultiMessageStatusURL, params)
+	if err != nil {
+		return nil, err
+	}
+	var result MultiMessageStatusResult
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
@@ -428,7 +444,7 @@ func (m *MiPush) GetAliasesOfRegID(ctx context.Context, regID string) (*AliasesO
 	return &result, nil
 }
 
-// 	获取一个应用的某个用户的目前订阅的所有Topic
+// 获取一个应用的某个用户的目前订阅的所有Topic
 func (m *MiPush) GetTopicsOfRegID(ctx context.Context, regID string) (*TopicsOfRegIDResult, error) {
 	params := m.assembleGetTopicsOfParams(regID)
 	bytes, err := m.doGet(ctx, m.host+TopicsAllURL, params)
@@ -532,6 +548,12 @@ func (m *MiPush) assembleStatusParams(msgID string) string {
 	form := url.Values{}
 	form.Add("msg_id", msgID)
 	return "?" + form.Encode()
+}
+
+func (m *MiPush) assembleMultiStatusParams(msgID string) url.Values {
+	form := url.Values{}
+	form.Add("msg_ids", msgID)
+	return form
 }
 
 func (m *MiPush) assembleStatusByJobKeyParams(jobKey string) string {

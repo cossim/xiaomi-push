@@ -23,9 +23,10 @@ const (
 )
 
 const (
-	StatsURL          = "/v1/stats/message/counters" // 统计push
-	MessageStatusURL  = "/v1/trace/message/status"   // 获取指定ID的消息状态
-	MessagesStatusURL = "/v1/trace/messages/status"  // 获取某个时间间隔内所有消息的状态
+	StatsURL              = "/v1/stats/message/counters"     // 统计push
+	MessageStatusURL      = "/v1/trace/message/status"       // 获取指定ID的消息状态
+	MultiMessageStatusURL = "/v1/trace/multi_message/status" // 批量获取指定ID的消息状态
+	MessagesStatusURL     = "/v1/trace/messages/status"      // 获取某个时间间隔内所有消息的状态
 )
 
 const (
